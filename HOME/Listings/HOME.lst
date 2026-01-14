@@ -1,0 +1,106 @@
+C51 COMPILER V9.60.0.0   HOME                                                              07/03/2021 14:35:38 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE HOME
+OBJECT MODULE PLACED IN .\Objects\HOME.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE HOME.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\HOME
+                    -.lst) TABS(2) OBJECT(.\Objects\HOME.obj)
+
+line level    source
+
+   1          
+   2          #include<reg51.h>
+   3          
+   4          void Uart_Init();
+   5          void Uart_Txchar(char);
+   6          char Uart_Rxchar();
+   7          void Uart_SendString(char *);
+   8          
+   9          sbit Lamp =P0^0;
+  10          sbit Fan =P0^1;
+  11          
+  12          void Uart_Init()
+  13          {
+  14   1        TMOD=0x20;
+  15   1        TH1=0xFD;
+  16   1        SCON =0x50;
+  17   1        TR1=1;
+  18   1      }
+  19          void Uart_Txchar(char Data)
+  20          {
+  21   1        SBUF=Data;
+  22   1        while(TI==0);
+  23   1        TI=0;
+  24   1      }
+  25          char Uart_Rxchar()
+  26          {
+  27   1        char dat;
+  28   1        while(RI==0);
+  29   1        RI=0;
+  30   1        dat=SBUF;
+  31   1        return(dat);
+  32   1        
+  33   1      }
+  34          
+  35          void Uart_SendString(char *str)
+  36          {
+  37   1        int i;
+  38   1        for (i=0;str[i]!=0;i++)
+  39   1        {
+  40   2          Uart_Txchar(str[i]);
+  41   2        }
+  42   1      }
+  43          
+  44          void main()
+  45          {
+  46   1        char Data_in;
+  47   1        Uart_Init();
+  48   1        P0=0;
+  49   1        while(1)
+  50   1        {
+  51   2          Data_in=Uart_Rxchar();
+  52   2          if(Data_in =='1')
+  53   2          {
+  54   3            Lamp=1;
+C51 COMPILER V9.60.0.0   HOME                                                              07/03/2021 14:35:38 PAGE 2   
+
+  55   3            Uart_SendString("Lamp On");
+  56   3          }
+  57   2          else if(Data_in =='2')
+  58   2          {
+  59   3            Lamp=0;
+  60   3            Uart_SendString("Lamp On");
+  61   3          }
+  62   2          else if(Data_in =='3')
+  63   2          {
+  64   3            Fan=1;
+  65   3            Uart_SendString("Fan On");
+  66   3            
+  67   3          }
+  68   2          else if(Data_in =='4')
+  69   2          {
+  70   3            Fan=0;
+  71   3            Uart_SendString("Fan Off");
+  72   3          }
+  73   2          else
+  74   2          {
+  75   3            Uart_SendString("choose 1,2,3,4");
+  76   3          }
+  77   2          
+  78   2        }
+  79   1        
+  80   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    140    ----
+   CONSTANT SIZE    =     38    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
